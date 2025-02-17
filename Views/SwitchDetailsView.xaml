@@ -1,0 +1,115 @@
+<UserControl x:Class="AristaNetworkManager.Views.SwitchDetailsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="300">
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Switch Details" 
+                   FontSize="16" 
+                   FontWeight="Bold" 
+                   Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,10">
+            <!-- Basic Information -->
+            <GroupBox Header="Basic Information">
+                <StackPanel Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="IP Address:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Model.IpAddress}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="1" Text="Hostname:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Model.Hostname}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="2" Text="Status:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Model.Status}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="3" Text="Connected:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Model.IsConnected}" Margin="0,0,0,5"/>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Hardware Information -->
+            <GroupBox Header="Hardware Information">
+                <StackPanel Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Model:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Model.Model}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="1" Text="Version:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Model.Version}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="2" Text="Serial Number:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Model.SerialNumber}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="3" Text="MAC Address:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Model.SystemMacAddress}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="4" Text="Uptime:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Model.Uptime}" Margin="0,0,0,5"/>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Credentials -->
+            <GroupBox Header="Credentials">
+                <StackPanel Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Username:" Margin="0,0,10,5"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Model.Username}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="1" Text="New Password:" Margin="0,0,10,5"/>
+                        <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="NewPasswordBox" Margin="0,0,0,5"/>
+
+                        <Button Grid.Row="2" Grid.ColumnSpan="2" 
+                                Content="Update Password"
+                                Command="{Binding UpdatePasswordCommand}"
+                                CommandParameter="{Binding ElementName=NewPasswordBox}"
+                                Margin="0,5,0,0"/>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </Grid>
+</UserControl>
