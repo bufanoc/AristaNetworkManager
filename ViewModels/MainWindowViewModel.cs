@@ -14,6 +14,7 @@ namespace AristaNetworkManager.ViewModels
     public partial class MainWindowViewModel : ObservableObject
     {
         private readonly Dictionary<string, ApiService> _apiServices = new();
+        private readonly ConfigurationService _configurationService;
         public ObservableCollection<SwitchViewModel> Switches { get; } = new();
         
         [ObservableProperty]
@@ -21,12 +22,13 @@ namespace AristaNetworkManager.ViewModels
 
         public MainWindowViewModel()
         {
+            _configurationService = ConfigurationService.Instance;
             InitializeApp();
         }
 
         private async Task InitializeApp()
         {
-            var config = ConfigurationService.Instance.Settings.ApiSettings;
+            var config = _configurationService.Settings.ApiSettings;
             // Add test switch with credentials from configuration
             await AddSwitch("192.168.88.182", "Test Switch", 
                 config.DefaultCredentials.Username, 
@@ -39,7 +41,7 @@ namespace AristaNetworkManager.ViewModels
             var dialog = new AddSwitchDialog
             {
                 Owner = Application.Current.MainWindow,
-                Username = ConfigurationService.Instance.Settings.ApiSettings.DefaultCredentials.Username
+                Username = _configurationService.Settings.ApiSettings.DefaultCredentials.Username
             };
 
             if (dialog.ShowDialog() == true)
@@ -49,84 +51,52 @@ namespace AristaNetworkManager.ViewModels
                     // Check if a switch with this IP already exists
                     if (Switches.Any(s => s.Model.IpAddress == dialog.IpAddress))
                     {
-                        MessageBox.Show(
-                            $"A switch with IP address {dialog.IpAddress} already exists.",
-                            "Duplicate Switch",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Warning);
+                        MessageBox.Show("A switch with this IP address already exists.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
-                    var apiService = new ApiService(dialog.Username, dialog.Password);
-                    _apiServices[dialog.IpAddress] = apiService;
-
-                    var switchModel = new SwitchModel(dialog.IpAddress, dialog.Hostname, dialog.Username, dialog.Password);
-                    var switchViewModel = new SwitchViewModel(switchModel, apiService);
-                    Switches.Add(switchViewModel);
-                    SelectedSwitch = switchViewModel;
+                    await AddSwitch(dialog.IpAddress, dialog.Hostname, dialog.Username, dialog.Password);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        $"Error adding switch: {ex.Message}",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    MessageBox.Show($"Error adding switch: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-            }
-        }
-
-        [RelayCommand]
-        private async Task RemoveSwitch(SwitchViewModel switchToRemove)
-        {
-            if (MessageBox.Show($"Are you sure you want to remove {switchToRemove.Model.Hostname}?", "Confirm Removal", 
-                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                _apiServices.Remove(switchToRemove.Model.IpAddress);
-                switchToRemove.Dispose();
-                Switches.Remove(switchToRemove);
             }
         }
 
         private async Task AddSwitch(string ipAddress, string hostname, string username, string password)
         {
-            try
-            {
-                // Check if a switch with this IP already exists
-                if (Switches.Any(s => s.Model.IpAddress == ipAddress))
-                {
-                    MessageBox.Show(
-                        $"A switch with IP address {ipAddress} already exists.",
-                        "Duplicate Switch",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-                    return;
-                }
+            var apiService = new ApiService(username, password);
+            _apiServices[ipAddress] = apiService;
 
-                var model = new SwitchModel(ipAddress, hostname ?? ipAddress, username, password);
-                var apiService = new ApiService(username, password);
-                var viewModel = new SwitchViewModel(model, apiService);
-                
-                // Add to collections
-                Switches.Add(viewModel);
-                _apiServices[ipAddress] = apiService;
-            }
-            catch (Exception ex)
+            var switchModel = new SwitchModel
             {
-                MessageBox.Show(
-                    $"Error adding switch: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
+                IpAddress = ipAddress,
+                Hostname = hostname,
+                Username = username,
+                Password = password
+            };
+
+            var switchViewModel = new SwitchViewModel(switchModel, apiService, _configurationService);
+            Switches.Add(switchViewModel);
         }
 
         [RelayCommand]
-        private async Task RefreshSwitches()
+        private void RemoveSwitch()
         {
-            foreach (var switchVm in Switches)
+            if (SelectedSwitch == null) return;
+
+            var result = MessageBox.Show(
+                $"Are you sure you want to remove {SelectedSwitch.Hostname}?",
+                "Confirm Removal",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
             {
-                await switchVm.FetchConfigurationCommand.ExecuteAsync(null);
+                _apiServices.Remove(SelectedSwitch.IpAddress);
+                Switches.Remove(SelectedSwitch);
+                SelectedSwitch = null;
             }
         }
     }

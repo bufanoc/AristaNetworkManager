@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace AristaNetworkManager.Models
 {
     public class AppSettings

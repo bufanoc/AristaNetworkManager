@@ -4,10 +4,10 @@ namespace AristaNetworkManager
 {
     public partial class AddSwitchDialog : Window
     {
-        public string IpAddress { get; private set; }
-        public string Hostname { get; private set; }
-        public string Username { get; private set; }
-        public string Password { get; private set; }
+        public string IpAddress { get; set; } = string.Empty;
+        public string Hostname { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
 
         public AddSwitchDialog()
         {

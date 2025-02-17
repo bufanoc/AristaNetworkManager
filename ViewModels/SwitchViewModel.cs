@@ -33,7 +33,7 @@ namespace AristaNetworkManager.ViewModels
             _configurationService = configurationService;
             Model.Status = "Connecting...";
 
-            var pollingInterval = _configurationService.Instance.Settings.ApiSettings.PollingInterval;
+            var pollingInterval = _configurationService.Settings.ApiSettings.PollingInterval;
             // Create a timer to check connection status periodically
             _connectionCheckTimer = new Timer(pollingInterval * 1000); // Convert seconds to milliseconds
             _connectionCheckTimer.Elapsed += async (s, e) => await CheckConnectionStatus();

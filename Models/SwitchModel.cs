@@ -6,19 +6,19 @@ namespace AristaNetworkManager.Models
     public partial class SwitchModel : ObservableObject
     {
         [ObservableProperty]
-        private string _ipAddress;
+        private string _ipAddress = string.Empty;
 
         [ObservableProperty]
-        private string _hostname;
+        private string _hostname = string.Empty;
 
         [ObservableProperty]
-        private string _username;
+        private string _username = string.Empty;
 
         [ObservableProperty]
-        private string _password;
+        private string _password = string.Empty;
 
         [ObservableProperty]
-        private string _status;
+        private string _status = string.Empty;
 
         [ObservableProperty]
         private bool _isConnected;
@@ -27,33 +27,27 @@ namespace AristaNetworkManager.Models
         private string? _currentConfig;
 
         [ObservableProperty]
-        private string _version;
+        private string? _version;
 
         [ObservableProperty]
-        private string _model;
+        private string? _model;
 
         [ObservableProperty]
-        private string _serialNumber;
+        private string? _serialNumber;
 
         [ObservableProperty]
-        private string _systemMacAddress;
+        private string? _systemMacAddress;
 
         [ObservableProperty]
-        private string _uptime;
+        private string? _uptime;
 
         [ObservableProperty]
         private List<VirtualNetwork> _virtualNetworks = new();
 
         public Dictionary<string, string> Properties { get; set; } = new();
 
-        public SwitchModel(string ipAddress, string hostname, string username, string password)
+        public SwitchModel()
         {
-            IpAddress = ipAddress;
-            Hostname = hostname;
-            Username = username;
-            Password = password;
-            Status = "Not Connected";
-            IsConnected = false;
         }
     }
 }
